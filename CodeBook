@@ -1,0 +1,214 @@
+temp_x_train <-- contain the X_train.txt data 
+temp_y_train <-- contains the y_train.txt data
+temp_x_test <-- contain the x_test.txt data
+temp_y_test <-- contains the y_test.txt data 
+temp_subject_test<-- contains the subject_test.txt data
+temp_subject_train<--contains the subject_train.txt data
+
+test_merge<-- contains the x_test.txt ; y_test.txt and subject_test.txt data using cbind
+train_merge <-- contain the x_train.txt;y_train.txt and subject_train.txt data using cbind
+
+Merge_Data <-- contains the the complete data set 
+
+
+#Assumptions:
+#1. All four files are situated in "data" folder in working directory
+#2. txt files X_train.txt,y_train.txt and subject_train.txt are in "data/train" folder of working directory
+#3. txt files X_test.txt,y_test.txt and subject_test.txt are in "data/test" folder of working directory
+
+
+#Req 1. Merges the training and test sets to create one data set.
+
+#Apporach: creating two data set one for train and test using cbind and then used rbind to 
+#          to combine both the data set.  
+
+
+#Step 1.  using read.table to read the data and cache it 
+
+temp_x_train<-read.table("./data/train/X_train.txt")
+temp_y_train<-read.table("./data/train/y_train.txt")
+temp_x_test<-read.table("./data/test/X_test.txt")
+temp_y_test<-read.table("./data/test/y_test.txt")
+temp_subject_test<-read.table("./data/test/subject_test.txt")
+temp_subject_train<-read.table("./data/train/subject_train.txt")
+
+
+
+#Step2: 
+#get feature names into Feature_CName
+
+
+#Step3:
+#associate the feature name with test and train data set X_files
+
+
+
+#Step4: 
+#associate label files with name 
+
+#step5: 
+
+
+#Step6:
+#create complete test data set
+#create complete train data set
+
+
+
+#Req 2. Extracts only the measurements on the mean and standard deviation for each measurement. 
+
+#Step1. Extract the mean and std. dev column names 
+#Step2. Cache the data 
+
+
+
+
+#Req 3. Uses descriptive activity names to name the activities in the data set
+
+#Step1. creating Activity names
+#Step2. Associate ActivityNames with Merge_Data$activity
+
+#Req 4. Appropriately labels the data set with descriptive variable names. 
+
+#Step1. load the library(stringr)
+
+
+#Step2. 
+#replacing extra . at the end of column names 
+#replacing mean with Mean
+#replacing tBody with Time.Body
+#replacing tGravity with Time.Gravity
+#replacing f with Frequency
+#replacing BodyBody with Body
+
+colnames(Merge_Data) <- str_replace_all(colnames(Merge_Data), "[\\.]+$", "")
+colnames(Merge_Data) <- str_replace_all(colnames(Merge_Data),"(-mean)","-MEAN-")
+colnames(Merge_Data) <- str_replace_all(colnames(Merge_Data),"tBody","Time.Body")
+colnames(Merge_Data) <- str_replace_all(colnames(Merge_Data),"tGravity","Time.Gravity")
+colnames(Merge_Data) <- str_replace_all(colnames(Merge_Data),"^f","Frequency.")
+colnames(Merge_Data) <- str_replace_all(colnames(Merge_Data),"BodyBody","Body")
+
+
+
+#Req 5. From the data set in step 4, creates a second, 
+#independent tidy data set 
+#with the average of each variable for 
+#each activity and each subject.	
+
+
+#Step1. load library (reshape2)
+#Step2. melt data (taking wide format data in long format for tidyness) 
+#Step3. using dcast
+#Step4.writing file
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+STEP 1: Read data from the targeted files:
+The files we have to analyze are stored in a folder called 'UCI HAR Dataset'.
+See the README.txt file for the detailed information on the dataset.
+The files that will be used to load data are listed as follows:
+
+test/subject_test.txt
+test/X_test.txt
+test/Y_test.txt
+train/subject_train.txt
+train/X_train.txt
+train/Y_train.txt
+
+Values of Variable Activity consist of data from "Y_train and Y_test.txt”
+Values of Variable Subject consist of data from “subject_train.txt” and subject_test.txt"
+Values of Varibles Features consist of data from “X_train.txt” and “X_test.txt”
+Names of Variables Features come from “features.txt”
+levels of Variable Activity come from “activity_labels.txt”
+
+So we will use Activity, Subject and Features as part of descriptive variable names for data in data frame.
+
+Get the list of the file
+
+fileslist <- file.path("UCI HAR Dataset") files<-list.files(fileslist, recursive=TRUE)
+
+Read data from the targeted files
+
+Read the Activity files:
+dataActivityTest <- read.table(file.path(fileslist, "test" , "Y_test.txt" ),header = FALSE)
+dataActivityTrain <- read.table(file.path(fileslist, "train", "Y_train.txt"),header = FALSE)
+
+Read the Subject files:
+
+dataSubjectTrain <- read.table(file.path(fileslist, "train", "subject_train.txt"),header = FALSE)
+dataSubjectTest <- read.table(file.path(fileslist, "test" , "subject_test.txt"),header = FALSE)
+
+Read the Features files:
+
+dataFeaturesTest <- read.table(file.path(fileslist, "test" , "X_test.txt" ),header = FALSE)
+dataFeaturesTrain <- read.table(file.path(fileslist, "train", "X_train.txt"),header = FALSE)
+
+STEP 2: Merges the training and the test sets to create one data set:
+1.Concatenate the data tables by rows (using rbind function)
+2.set names to variables
+3.Merge columns to get the data frame Data for all data (using cbind function)
+
+STEP 3: Extracts only the measurements on the mean and standard deviation for each measurement.
+For this purpose we subset Names of Features by measurements on the mean and standard deviation.
+
+subdataFeaturesNames<-dataFeaturesNames$V2[grep("mean\(\)|std\(\)", dataFeaturesNames$V2)]
+
+Subset the data frame Data by seleted names of Features
+
+selectedNames<-c(as.character(subdataFeaturesNames), "subject", "activity" ) subData<-subset(Data,select=selectedNames)
+
+STEP 4: Uses descriptive activity names to name the activities in the data set
+according with descriptive activity names from "activity_labels.txt"
+
+subData$activity <- as.character(subData$activity)
+subData$activity[subData$activity == 1] <- "Walking"
+subData$activity[subData$activity == 2] <- "Walking Upstairs"
+subData$activity[subData$activity == 3] <- "Walking Downs"
+subData$activity[subData$activity == 5] <- "Standing"
+subData$activity[subData$activity == 6] <- "Laying"
+subData$activity <- as.factor(subData$activity)
+
+Appropriately labels the data set with descriptive variable names
+
+names(subData)<-gsub("^t", "time", names(subData))
+names(subData)<-gsub("^f", "frequency", names(subData))
+names(subData)<-gsub("Acc", "Accelerometer", names(subData))
+names(subData)<-gsub("Gyro", "Gyroscope", names(subData))
+names(subData)<-gsub("Mag", "Magnitude", names(subData))
+names(subData)<-gsub("BodyBody", "Body", names(subData))
+
+STEP 5: Creates a second, independent tidy data set and ouput it
+library(plyr);
+subData2<-aggregate(. ~subject + activity, subData, mean)
+subData2<-subData2[order(subData2$subject,subData2$activity),]
+write.table(subData2, file = "tidydata_ss.txt",row.name=FALSE)
